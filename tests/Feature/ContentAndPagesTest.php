@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Filament\Resources\LessonResource;
 use App\Livewire\Onboarding;
 use App\Livewire\PlacementTest;
 use App\Models\Exam;
@@ -42,6 +43,8 @@ it('renders every learner page for the demo student', function () {
     $this->actingAs($this->student)->get('/certificates')->assertOk();
     $this->actingAs($this->student)->get('/profile')->assertOk();
     $this->actingAs($this->student)->get('/placement')->assertOk();
+    $this->actingAs($this->student)->get('/')->assertRedirect(route('dashboard'));
+    auth()->logout();
     $this->get('/')->assertOk()->assertSee('EnglishPath');
     $this->get('/offline')->assertOk();
 });
@@ -91,10 +94,12 @@ it('lets admins open every Filament resource and blocks students', function () {
     foreach (['levels', 'modules', 'units', 'lessons', 'questions', 'exams', 'vocabularies', 'submissions', 'users', 'audit-logs', 'tense-topics'] as $slug) {
         $this->actingAs($admin)->get("/admin/{$slug}")->assertOk();
     }
-    $this->actingAs($admin)->get('/admin/lessons/'.Lesson::first()->id.'/edit')->assertOk();
+    $this->actingAs($admin)->get(LessonResource::getUrl('edit', ['record' => Lesson::first()]))->assertOk();
     $this->actingAs($admin)->get('/admin/questions/'.Question::first()->id.'/edit')->assertOk();
+    $this->flushSession();
     $this->actingAs($this->student)->get('/admin/lessons')->assertForbidden();
 
+    $this->flushSession();
     $reviewer = User::where('email', 'reviewer@demo.test')->first();
     $this->actingAs($reviewer)->get('/admin/submissions')->assertOk();
     $this->actingAs($reviewer)->get('/admin/lessons')->assertForbidden();
