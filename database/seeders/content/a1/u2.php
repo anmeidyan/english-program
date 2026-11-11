@@ -28,6 +28,7 @@ return [
         [
             'title' => "Possessives: my, your, his, her & 's",
             'type' => 'grammar',
+            'generator' => ['topic' => 'possessives', 'count' => 40],
             'minutes' => 15,
             'blocks' => [
                 B::heading('Possessive adjectives'),
@@ -103,6 +104,18 @@ return [
         [
             'title' => "Reading: Anton's Family",
             'type' => 'reading',
+            'quiz_passage' => 'Hi, I\'m Mei. I live in Medan with my family. My father is a taxi driver and my mother is a teacher. I have two brothers. Andi is nineteen and Rudi is eleven. Andi is a university student in Medan. My grandfather lives with us too. He is seventy-five and he loves gardening. Our cat\'s name is Snow.',
+            'quiz_passage_title' => 'Mei\'s Family',
+            'quiz_questions' => [
+                Q::mcq('Where does Mei live?', ['Medan', 'Jakarta', 'Bandung', 'Bali'], 0),
+                Q::mcq('What is Mei\'s mother\'s job?', ['taxi driver', 'teacher', 'nurse', 'doctor'], 1),
+                Q::tf('Mei has two sisters.', 'false', 'She has two brothers.'),
+                Q::mcq('How old is Rudi?', ['nine', 'eleven', 'nineteen', 'seventy-five'], 1),
+                Q::tf('Andi is a university student.', 'true'),
+                Q::tf('Mei\'s grandmother lives with them.', 'not_given'),
+                Q::mcq('Who loves gardening?', ['Mei\'s grandfather', 'Mei\'s father', 'Andi', 'Rudi'], 0),
+                Q::mcq('What is Snow?', ['the family\'s cat', 'Mei\'s brother', 'a city', 'the grandfather\'s garden'], 0),
+            ],
             'minutes' => 15,
             'passage' => "My name is Anton and this is my family. My father's name is Hadi. He is a police officer. My mother's name is Lestari. She is a nurse at a hospital in Yogyakarta. I have one sister and one brother. My sister, Dewi, is twenty-five. She is married. Her husband's name is Rizal. They have a baby daughter, Nadia. My brother, Bayu, is fifteen. He is a student. My grandparents live with us. Our house is busy but happy!",
             'blocks' => [
@@ -125,6 +138,17 @@ return [
         [
             'title' => 'Listening: A Family Photo',
             'type' => 'listening',
+            'quiz_audio' => 'This is my brother Leo. He\'s twenty-one and he\'s a chef. This is his wife, Nina. She\'s a doctor. They have two children, a son and a daughter. The son is five and the daughter is three. And this is our grandfather. He\'s ninety!',
+            'quiz_questions' => [
+                Q::mcq('What is Leo\'s job?', ['doctor', 'chef', 'teacher', 'driver'], 1),
+                Q::mcq('Who is Nina?', ['Leo\'s wife', 'Leo\'s sister', 'Leo\'s mother', 'Leo\'s daughter'], 0),
+                Q::mcq('How many children do Leo and Nina have?', ['one', 'two', 'three', 'four'], 1),
+                Q::mcq('How old is the daughter?', ['three', 'five', 'thirteen', 'twenty-one'], 0),
+                Q::tf('Nina is a teacher.', 'false', 'She\'s a doctor.'),
+                Q::mcq('How old is the grandfather?', ['seventy', 'eighty', 'ninety', 'nineteen'], 2),
+                Q::tf('Leo is twenty-one.', 'true'),
+                Q::dict('They have two children.'),
+            ],
             'minutes' => 15,
             'audio' => 'Look at this photo. This is my family on holiday in Bali. The tall man is my father. He is fifty years old. The woman next to him is my mother. She is a cook. These two boys are my brothers, Arif and Joko. Arif is eighteen and Joko is twelve. The old woman is my grandmother. She is eighty! And the little girl is my cousin, Maya.',
             'blocks' => [
@@ -147,6 +171,7 @@ return [
         [
             'title' => 'Writing: My Family',
             'type' => 'writing',
+            'generator' => ['topic' => 'writing_mechanics', 'count' => 30],
             'minutes' => 20,
             'blocks' => [
                 B::heading('Aturan dasar menulis'),

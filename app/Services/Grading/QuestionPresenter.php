@@ -41,7 +41,7 @@ class QuestionPresenter
         }
 
         $view += match ($question->type) {
-            QuestionType::McqSingle, QuestionType::McqMulti => ['options' => $this->shuffle($payload['options'] ?? [], $seed + $question->id)],
+            QuestionType::McqSingle, QuestionType::McqMulti => ['options' => $this->options($question, $seed)],
             QuestionType::TrueFalseNg => ['options' => ['true', 'false', 'not_given']],
             QuestionType::FillBlank => ['blanks' => (int) ($payload['blanks'] ?? 1)],
             QuestionType::WordOrder => ['tokens' => $this->shuffle($payload['tokens'] ?? [], $seed + $question->id), 'end_punctuation' => $payload['end_punctuation'] ?? '.'],
@@ -64,6 +64,28 @@ class QuestionPresenter
         };
 
         return $view;
+    }
+
+    /**
+     * Options in random order. A single-choice item with more options than `max_options` (default 4)
+     * shows the correct one plus a random subset of distractors, so the set itself varies between
+     * attempts and position/elimination cannot be memorised. Grading uses option keys, not positions.
+     *
+     * @return list<mixed>
+     */
+    private function options(Question $question, int $seed): array
+    {
+        $options = array_values((array) ($question->payload['options'] ?? []));
+        $max = max(2, (int) ($question->payload['max_options'] ?? 4));
+
+        if ($question->type === QuestionType::McqSingle && count($options) > $max) {
+            $correctKey = $question->answer_key['correct'] ?? null;
+            $right = array_values(array_filter($options, fn ($o) => is_array($o) && ($o['key'] ?? null) === $correctKey));
+            $wrong = array_values(array_filter($options, fn ($o) => ! is_array($o) || ($o['key'] ?? null) !== $correctKey));
+            $options = [...$right, ...array_slice($this->shuffle($wrong, $seed * 31 + $question->id), 0, $max - count($right))];
+        }
+
+        return $this->shuffle($options, $seed + $question->id);
     }
 
     /** Script to speak for listening/dictation/repeat items (returned by the audio-play endpoint). */

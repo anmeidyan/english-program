@@ -15,6 +15,7 @@ use App\Models\Question;
 use App\Models\QuestionTag;
 use App\Models\Unit;
 use App\Models\Vocabulary;
+use App\Services\Content\Generators\TemplateQuestionGenerator;
 use App\Services\CurriculumService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -37,6 +38,7 @@ class ContentImportService
     public function __construct(
         private readonly ExamProvisioner $exams,
         private readonly CurriculumService $curriculum,
+        private readonly TemplateQuestionGenerator $generator,
     ) {}
 
     /**
@@ -121,11 +123,19 @@ class ContentImportService
         $unitTag = $unit->slug;
         $vocabIds = $this->importVocabulary($data['vocabulary'] ?? [], $module->level_id, $path);
 
+        $lessons = [];
         foreach (array_values($data['lessons']) as $li => $lessonData) {
-            $this->importLesson($unit, $lessonData, $li + 1, [$levelTag, $unitTag], $vocabIds, $publish, "{$path}.lessons.{$li}");
+            $lesson = $this->importLesson($unit, $lessonData, $li + 1, [$levelTag, $unitTag], $vocabIds, $publish, "{$path}.lessons.{$li}");
+            $lessons[] = [$lesson, ! empty($lessonData['vocab'])];
         }
 
-        $this->generateVocabularyQuestions($vocabIds, $module->level_id, [$levelTag, $unitTag]);
+        $vocabLessonTags = array_map(fn (array $l) => $l[0]->slug, array_filter($lessons, fn (array $l) => $l[1]));
+        $this->generateVocabularyQuestions($vocabIds, $module->level_id, [$levelTag, $unitTag, ...$vocabLessonTags]);
+
+        // quizzes are provisioned after every generated item exists, so their rules see the full pool
+        foreach ($lessons as [$lesson]) {
+            $this->exams->forLesson($lesson, $lesson->slug);
+        }
         $this->exams->forUnit($unit, $unitTag);
     }
 
@@ -134,7 +144,7 @@ class ContentImportService
      * @param  list<string>  $tags
      * @param  list<int>  $vocabIds
      */
-    private function importLesson(Unit $unit, array $data, int $order, array $tags, array $vocabIds, bool $publish, string $path): void
+    private function importLesson(Unit $unit, array $data, int $order, array $tags, array $vocabIds, bool $publish, string $path): Lesson
     {
         $type = LessonType::from($data['type']);
         $skill = Skill::tryFrom($data['skill'] ?? $type->value) ?? Skill::Grammar;
@@ -166,9 +176,54 @@ class ContentImportService
                     $lesson->questions()->attach($question->id, ['sort_order' => $qi + 1]);
                 }
             }
+
+            // quiz-only items (own passage/audio), never shown in practice so they cannot be memorised there
+            $quizContext = ['passage' => $data['quiz_passage'] ?? null, 'audio' => $data['quiz_audio'] ?? null];
+            foreach (array_values($data['quiz_questions'] ?? []) as $qi => $q) {
+                $this->createQuestion($q, $skill, $unit, $quizContext, [...$tags, $lessonTag, 'quiz-only'], "{$path}.quiz_questions.{$qi}");
+            }
         }
 
-        $this->exams->forLesson($lesson, $lessonTag);
+        if (! empty($data['generator'])) {
+            $this->generateTemplateQuestions($lesson, $skill, (array) $data['generator'], [...$tags, $lessonTag], $path);
+        }
+
+        return $lesson;
+    }
+
+    /**
+     * Quiz/exam-only variants from a template topic (never attached to practice), see
+     * TemplateQuestionGenerator. Idempotent per lesson.
+     *
+     * @param  array{topic?: string, count?: int}  $config
+     * @param  list<string>  $tags
+     */
+    private function generateTemplateQuestions(Lesson $lesson, Skill $skill, array $config, array $tags, string $path): void
+    {
+        $topic = (string) ($config['topic'] ?? '');
+        if (! array_key_exists($topic, TemplateQuestionGenerator::TOPICS)) {
+            $this->errors[] = "{$path}.generator: topik \"{$topic}\" tidak dikenal (".implode(', ', array_keys(TemplateQuestionGenerator::TOPICS)).').';
+
+            return;
+        }
+        $already = Question::query()->whereHas('tags', fn ($q) => $q->where('name', 'generated-template'))
+            ->whereHas('tags', fn ($q) => $q->where('name', $lesson->slug))->exists();
+        if ($already) {
+            return;
+        }
+
+        $levelId = $lesson->unit()->firstOrFail()->module()->value('level_id');
+        $tagIds = $this->tagIds([...$tags, 'generated-template', 'topic-'.$topic]);
+        foreach ($this->generator->generate($topic, (int) ($config['count'] ?? 40), $lesson->id) as $item) {
+            $question = Question::query()->create($item + [
+                'skill' => $skill,
+                'level_id' => $levelId,
+                'points' => 1,
+                'is_active' => true,
+            ]);
+            $question->tags()->sync($tagIds);
+            $this->stats['questions']++;
+        }
     }
 
     /**
@@ -241,7 +296,9 @@ class ContentImportService
     }
 
     /**
-     * Two exam-pool questions per word: meaning (MCQ) and listen-and-type.
+     * Exam-pool variants per word (never shown in practice): meaning (MCQ), reverse meaning (MCQ),
+     * listen-and-type, and — when the example sentence contains the word — fill in the blank.
+     * MCQs carry up to 6 options; each presentation shows the answer + 3 random distractors.
      *
      * @param  list<int>  $vocabIds
      * @param  list<string>  $tags
@@ -254,40 +311,71 @@ class ContentImportService
         }
         $tagIds = $this->tagIds([...$tags, 'generated-vocabulary']);
 
-        foreach ($words as $i => $word) {
+        foreach ($words as $word) {
             $exists = Question::query()->where('skill', Skill::Vocabulary->value)
                 ->where('payload->vocabulary_id', $word->id)->exists();
             if ($exists) {
                 continue;
             }
+            $rng = new Randomizer(new Mt19937(crc32($word->word)));
+            $others = $words->where('id', '!=', $word->id)->values();
+            $pick = fn (string $field) => array_slice($rng->shuffleArray($others->pluck($field)->unique()->values()->all()), 0, 5);
 
-            $pool = $words->where('id', '!=', $word->id)->pluck('meaning_id')->values()->all();
-            $distractors = array_slice((new Randomizer(new Mt19937(crc32($word->word))))->shuffleArray($pool), 0, 3);
-            $options = [...$distractors];
-            $correctIndex = $i % 4;
-            array_splice($options, $correctIndex, 0, [$word->meaning_id]);
-            $keyed = array_map(fn ($text, $k) => ['key' => chr(97 + $k), 'text' => $text], $options, array_keys($options));
+            $rows = [
+                $this->choice("What is the meaning of \"{$word->word}\"?", $word->meaning_id, $pick('meaning_id'), $rng, 1),
+                $this->choice("Which word means \"{$word->meaning_id}\"?", $word->word, $pick('word'), $rng, 1),
+                [
+                    'type' => QuestionType::Dictation, 'difficulty' => 2,
+                    'prompt' => 'Listen and type the word you hear.',
+                    'payload' => ['tts_text' => $word->word],
+                    'answer_key' => ['text' => $word->word],
+                ],
+            ];
 
-            $mcq = Question::query()->create([
-                'type' => QuestionType::McqSingle, 'skill' => Skill::Vocabulary, 'level_id' => $levelId, 'difficulty' => 1,
-                'prompt' => "What is the meaning of \"{$word->word}\"?",
-                'payload' => ['options' => $keyed, 'vocabulary_id' => $word->id],
-                'answer_key' => ['correct' => chr(97 + $correctIndex)],
-                'explanation' => "{$word->word} = {$word->meaning_id}. {$word->example}",
-                'points' => 1, 'is_active' => true,
-            ]);
-            $dictation = Question::query()->create([
-                'type' => QuestionType::Dictation, 'skill' => Skill::Vocabulary, 'level_id' => $levelId, 'difficulty' => 2,
-                'prompt' => 'Listen and type the word you hear.',
-                'payload' => ['tts_text' => $word->word, 'vocabulary_id' => $word->id],
-                'answer_key' => ['text' => $word->word],
-                'explanation' => "{$word->word} ({$word->meaning_id})",
-                'points' => 1, 'is_active' => true,
-            ]);
-            $mcq->tags()->sync($tagIds);
-            $dictation->tags()->sync($tagIds);
-            $this->stats['questions'] += 2;
+            $example = (string) $word->example;
+            $pattern = '/\b'.preg_quote($word->word, '/').'\b/i';
+            if ($example !== '' && preg_match($pattern, $example) === 1) {
+                $rows[] = [
+                    'type' => QuestionType::FillBlank, 'difficulty' => 2,
+                    'prompt' => preg_replace($pattern, '___', $example, 1).' ('.$word->meaning_id.')',
+                    'payload' => ['blanks' => 1],
+                    'answer_key' => ['blanks' => [[$word->word]]],
+                ];
+            }
+
+            foreach ($rows as $row) {
+                $row['payload']['vocabulary_id'] = $word->id;
+                $question = Question::query()->create($row + [
+                    'skill' => Skill::Vocabulary, 'level_id' => $levelId, 'points' => 1, 'is_active' => true,
+                    'explanation' => "{$word->word} = {$word->meaning_id}. {$word->example}",
+                ]);
+                $question->tags()->sync($tagIds);
+                $this->stats['questions']++;
+            }
         }
+    }
+
+    /**
+     * @param  list<string>  $distractors
+     * @return array<string, mixed>
+     */
+    private function choice(string $prompt, string $correct, array $distractors, Randomizer $rng, int $difficulty): array
+    {
+        $options = $rng->shuffleArray(array_values(array_unique([$correct, ...$distractors])));
+        $keyed = [];
+        $correctKey = 'a';
+        foreach ($options as $i => $text) {
+            $keyed[] = ['key' => chr(97 + $i), 'text' => $text];
+            if ($text === $correct) {
+                $correctKey = chr(97 + $i);
+            }
+        }
+
+        return [
+            'type' => QuestionType::McqSingle, 'difficulty' => $difficulty, 'prompt' => $prompt,
+            'payload' => ['options' => $keyed, 'max_options' => 4],
+            'answer_key' => ['correct' => $correctKey],
+        ];
     }
 
     /**

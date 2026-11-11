@@ -28,6 +28,7 @@ return [
         [
             'title' => 'Simple Present: I work, she works',
             'type' => 'grammar',
+            'generator' => ['topic' => 'present_simple', 'count' => 40],
             'minutes' => 20,
             'blocks' => [
                 B::heading('Kapan memakai Simple Present?'),
@@ -99,6 +100,18 @@ return [
         [
             'title' => 'Reading: A Day in the Life of a Nurse',
             'type' => 'reading',
+            'quiz_passage' => 'Kevin is a university student in Yogyakarta. He gets up at half past six every day. He has breakfast with his roommate and then he rides his bike to the campus. His classes start at eight o\'clock. He has lunch in the canteen at one. In the afternoon he studies in the library. He goes home at five and plays basketball with his friends. He always goes to bed at eleven.',
+            'quiz_passage_title' => 'A Day in the Life of a Student',
+            'quiz_questions' => [
+                Q::mcq('How does Kevin go to the campus?', ['by bus', 'by bike', 'by car', 'on foot'], 1),
+                Q::mcq('What time does he get up?', ['6:00', '6:30', '7:30', '8:00'], 1),
+                Q::tf('His classes start at nine.', 'false', 'They start at eight o\'clock.'),
+                Q::mcq('Where does he have lunch?', ['at home', 'in the canteen', 'in the library', 'at a restaurant'], 1),
+                Q::tf('He studies in the library in the afternoon.', 'true'),
+                Q::tf('Kevin has a dog.', 'not_given'),
+                Q::mcq('What does he do after he goes home?', ['He cooks dinner.', 'He plays basketball.', 'He watches TV.', 'He studies.'], 1),
+                Q::tf('He goes to bed at midnight.', 'false', 'He goes to bed at eleven.'),
+            ],
             'minutes' => 15,
             'passage' => "Maria is a nurse. She works at a big hospital in Manila. Her day starts very early. She wakes up at five o'clock and has a cup of coffee. She takes the train to work at six. Her work starts at seven o'clock. She helps the doctors and talks to patients. She has lunch at twelve with her friends. Maria finishes work at three o'clock in the afternoon. In the evening, she cooks dinner and reads a book. She goes to bed at ten. On Sundays, she doesn't work. She visits her parents.",
             'blocks' => [
@@ -121,6 +134,17 @@ return [
         [
             'title' => 'Listening: A Baker\'s Day',
             'type' => 'listening',
+            'quiz_audio' => 'Hi, I\'m Lisa. I\'m a teacher. I get up at six o\'clock and I go to school by bus. School starts at half past seven. I teach English to young children. I have lunch at twelve. School finishes at two o\'clock, but I usually stay until four to check homework. In the evening I go swimming on Mondays and Wednesdays.',
+            'quiz_questions' => [
+                Q::mcq('What is Lisa\'s job?', ['nurse', 'teacher', 'student', 'driver'], 1),
+                Q::mcq('What time does she get up?', ['five o\'clock', 'six o\'clock', 'half past six', 'seven o\'clock'], 1),
+                Q::mcq('How does she go to school?', ['by bike', 'by bus', 'by car', 'on foot'], 1),
+                Q::mcq('What time does school start?', ['7:00', '7:30', '8:00', '6:30'], 1),
+                Q::tf('She teaches maths.', 'false', 'She teaches English.'),
+                Q::mcq('Why does she stay at school until four?', ['to check homework', 'to have lunch', 'to go swimming', 'to teach adults'], 0),
+                Q::mcq('When does she go swimming?', ['every day', 'on Mondays and Wednesdays', 'on weekends', 'on Fridays'], 1),
+                Q::dict('School starts at half past seven.'),
+            ],
             'minutes' => 15,
             'audio' => "Hi, I'm Tom. I'm a baker, so my day is different. I get up at three o'clock in the morning! I start work at four. I make bread and cakes. The shop opens at seven. I have lunch at eleven, and I finish work at one o'clock. In the afternoon I sleep for two hours. In the evening I play football with my friends on Tuesdays and Thursdays. I go to bed at half past eight.",
             'blocks' => [
@@ -143,6 +167,7 @@ return [
         [
             'title' => 'Writing: An Email About My Day',
             'type' => 'writing',
+            'generator' => ['topic' => 'writing_mechanics', 'count' => 30],
             'minutes' => 20,
             'blocks' => [
                 B::heading('Struktur email untuk teman'),

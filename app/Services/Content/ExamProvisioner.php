@@ -24,7 +24,7 @@ use Illuminate\Database\Eloquent\Model;
 class ExamProvisioner
 {
     /** @var array<string, int> */
-    private const UNIT_RULES = ['grammar' => 5, 'vocabulary' => 6, 'reading' => 4, 'listening' => 4, 'speaking' => 3, 'writing' => 3];
+    private const UNIT_RULES = ['grammar' => 8, 'vocabulary' => 8, 'reading' => 4, 'listening' => 4, 'speaking' => 4, 'writing' => 4];
 
     /** @var array<string, int> */
     private const LEVEL_RULES = ['grammar' => 12, 'vocabulary' => 14, 'reading' => 10, 'listening' => 10, 'speaking' => 6, 'writing' => 6];

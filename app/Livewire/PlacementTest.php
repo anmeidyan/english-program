@@ -43,6 +43,10 @@ class PlacementTest extends Component
     #[Locked]
     public ?string $resultLevel = null;
 
+    /** fixed for the whole test so options don't jump between re-renders */
+    #[Locked]
+    public int $seed = 0;
+
     public ?string $answer = null;
 
     public ?string $blockedUntil = null;
@@ -57,6 +61,7 @@ class PlacementTest extends Component
     {
         abort_if($this->blockedUntil !== null, 403);
         $this->started = true;
+        $this->seed = random_int(1, 1_000_000_000);
         $this->loadStage($placement, $this->stage);
     }
 
@@ -115,7 +120,7 @@ class PlacementTest extends Component
         $current = $this->queue !== [] ? Question::query()->find($this->queue[0]) : null;
 
         return view('livewire.placement-test', [
-            'question' => $current ? $presenter->present($current, QuestionPresenter::MODE_EXAM, crc32((string) auth()->id())) : null,
+            'question' => $current ? $presenter->present($current, QuestionPresenter::MODE_EXAM, $this->seed) : null,
             'progress' => count($this->asked) - count($this->queue),
         ]);
     }

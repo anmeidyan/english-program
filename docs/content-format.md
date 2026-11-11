@@ -41,6 +41,10 @@ Import dilakukan di **Admin → Kurikulum → Import konten** (job queue, lapora
 ```
 
 - `level`: `PRE_A1`, `A1` … `C2` (level harus sudah ada).
+- **Anti-hafalan** (soal latihan menampilkan jawaban, jadi quiz/ujian sebaiknya memakai soal lain):
+  - `"quiz_questions": [...]` — soal khusus quiz/ujian, **tidak** muncul di latihan. Untuk reading/listening sertakan `"quiz_passage"` / `"quiz_audio"` (teks/audio berbeda dari latihan).
+  - `"generator": {"topic": "to_be", "count": 40}` — buat varian otomatis dari template (khusus quiz/ujian). Topik: `to_be`, `possessives`, `there_is_are`, `present_simple`, `do_does`, `present_continuous`, `functional_language`, `writing_mechanics`.
+  - Kosakata unit otomatis menghasilkan 3–4 varian per kata (arti, arti terbalik, dikte, isian dari kalimat contoh) untuk pool quiz lesson kosakata dan ujian.
 - `vocabulary`: array `[word, part_of_speech, ipa_us, ipa_uk, meaning_id, definition_en, example]` atau objek dengan kunci tersebut. `"vocab": true` pada lesson menautkan kosakata unit ke lesson (masuk flashcard saat lesson selesai).
 - Import idempoten per slug: lesson yang sudah punya soal tidak ditambah soal lagi (`skipped`).
 - Tag otomatis: `<level>` (mis. `a1`), slug unit, slug lesson. Ujian dibuat/diperbarui otomatis: Lesson Quiz (8 soal dari tag lesson), Unit Exam (per skill dari tag unit), Level Exam (per skill dari tag level + 1 speaking + 1 writing).
@@ -66,7 +70,7 @@ Import dilakukan di **Admin → Kurikulum → Import konten** (job queue, lapora
 
 | type | payload | answer_key |
 |---|---|---|
-| `mcq_single` | `{"options":[{"key":"a","text":"am"}]}` | `{"correct":"a"}` |
+| `mcq_single` | `{"options":[{"key":"a","text":"am"}],"max_options":4}` — boleh > 4 opsi; tiap tampil: jawaban benar + pengecoh acak sampai `max_options` | `{"correct":"a"}` |
 | `mcq_multi` | sama | `{"correct":["a","c"],"partial":true}` |
 | `true_false_ng` | `{"options":["true","false","not_given"]}` | `{"correct":"not_given"}` |
 | `fill_blank` | `{"blanks":2}` (prompt memakai `___`) | `{"blanks":[["are"],["door","window"]]}` |

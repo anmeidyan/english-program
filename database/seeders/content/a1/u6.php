@@ -28,6 +28,7 @@ return [
         [
             'title' => 'Present Continuous: I am reading',
             'type' => 'grammar',
+            'generator' => ['topic' => 'present_continuous', 'count' => 40],
             'minutes' => 20,
             'blocks' => [
                 B::heading('Sesuatu yang sedang terjadi sekarang'),
@@ -95,6 +96,18 @@ return [
         [
             'title' => 'Reading: A Message from the Park',
             'type' => 'reading',
+            'quiz_passage' => 'Hi Dad! We\'re at the beach now. The weather is great. It\'s hot and sunny. Mum is reading a magazine under an umbrella. My little brother is building a sandcastle. I\'m not swimming because the water is cold, so I\'m taking photos of the boats. We\'re having lunch at a small café at one o\'clock. See you tonight! Love, Sara',
+            'quiz_passage_title' => 'A Text from the Beach',
+            'quiz_questions' => [
+                Q::mcq('Where is Sara?', ['at the beach', 'at the park', 'at home', 'at school'], 0),
+                Q::mcq('What\'s the weather like?', ['cold and rainy', 'hot and sunny', 'cloudy', 'windy'], 1),
+                Q::mcq('What is Mum doing?', ['swimming', 'reading a magazine', 'taking photos', 'building a sandcastle'], 1),
+                Q::tf('Sara is swimming.', 'false', 'She isn\'t swimming; the water is cold.'),
+                Q::mcq('Why isn\'t Sara swimming?', ['The water is cold.', 'She is tired.', 'She is eating.', 'It is raining.'], 0),
+                Q::tf('Sara\'s brother is building a sandcastle.', 'true'),
+                Q::tf('Sara\'s brother is eight years old.', 'not_given'),
+                Q::mcq('Who is the message for?', ['Sara\'s father', 'Sara\'s mother', 'Sara\'s brother', 'Sara\'s friend'], 0),
+            ],
             'minutes' => 15,
             'passage' => "Hi Mum! I'm at the park with Lisa and her brother. It's a beautiful day and it's very sunny. Lots of people are here. Some children are playing football and a man is running with his dog. Two old women are sitting on a bench and talking. Lisa is taking photos of the flowers. Her brother isn't playing with us — he's sleeping under a tree! We're having ice cream now. I'm coming home at five o'clock. Love, Ana",
             'blocks' => [
@@ -116,6 +129,17 @@ return [
         [
             'title' => 'Listening: A Phone Call',
             'type' => 'listening',
+            'quiz_audio' => 'Hi Mum! — Hi Ben. Where are you? — I\'m at the library. I\'m studying for my English test. — Oh good. Is Sam with you? — No, he isn\'t. He\'s playing basketball at the sports centre. — OK. Dinner is at seven. — Great, see you later!',
+            'quiz_questions' => [
+                Q::mcq('Where is Ben?', ['at the library', 'at the sports centre', 'at home', 'at school'], 0),
+                Q::mcq('What is Ben doing?', ['playing basketball', 'studying for a test', 'cooking dinner', 'reading a magazine'], 1),
+                Q::mcq('What is Sam doing?', ['studying', 'playing basketball', 'sleeping', 'swimming'], 1),
+                Q::mcq('Where is Sam?', ['at the library', 'at the sports centre', 'at home', 'at the park'], 1),
+                Q::mcq('What time is dinner?', ['at six', 'at seven', 'at eight', 'at five'], 1),
+                Q::tf('Sam is at the library.', 'false'),
+                Q::tf('Ben is talking to his father.', 'false', 'He\'s talking to his mum.'),
+                Q::dict('I\'m studying for my English test.'),
+            ],
             'minutes' => 15,
             'audio' => "Hello? — Hi, Dan! It's Mia. What are you doing? — Oh, hi Mia. I'm cooking dinner. My parents are coming at seven. — Nice! What are you cooking? — Chicken and rice. And my sister is making a cake. — Great. Listen, are you free tomorrow? — Yes, I am. Why? — We're playing tennis in the morning. Do you want to come? — Sure! See you tomorrow.",
             'blocks' => [
@@ -138,6 +162,7 @@ return [
         [
             'title' => 'Writing: A Holiday Postcard',
             'type' => 'writing',
+            'generator' => ['topic' => 'writing_mechanics', 'count' => 30],
             'minutes' => 20,
             'blocks' => [
                 B::heading('Menulis kartu pos'),

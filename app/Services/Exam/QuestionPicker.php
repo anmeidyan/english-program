@@ -10,12 +10,14 @@ use App\Models\ExamAttempt;
 use App\Models\ExamQuestionRule;
 use App\Models\Question;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Random\Engine\Secure;
 use Random\Randomizer;
 
 /**
  * Draws a fresh random set for every attempt (PRD 5.3): per rule, questions this learner has
- * not seen in this exam come first; previously seen ones only fill the gap. No duplicates.
+ * not seen in this exam and that are not lesson-practice items come first; seen or practice
+ * questions only fill the gap. No duplicates.
  */
 class QuestionPicker
 {
@@ -37,10 +39,14 @@ class QuestionPicker
         $rules = $exam->rules()->get();
         foreach ($rules as $rule) {
             $candidates = array_values(array_diff($this->candidates($rule), $chosen));
-            $fresh = array_values(array_filter($candidates, fn (int $id) => ! isset($seen[$id])));
-            $used = array_values(array_filter($candidates, fn (int $id) => isset($seen[$id])));
+            $practice = $this->practiceIds($candidates);
 
-            $take = [...$this->shuffled($fresh), ...$this->shuffled($used)];
+            // preference: not seen + not practice → seen + not practice → not seen + practice → seen + practice
+            $tiers = [[], [], [], []];
+            foreach ($candidates as $id) {
+                $tiers[(isset($practice[$id]) ? 2 : 0) + (isset($seen[$id]) ? 1 : 0)][] = $id;
+            }
+            $take = array_merge(...array_map(fn (array $tier) => $this->shuffled($tier), $tiers));
             $chosen = [...$chosen, ...array_slice($take, 0, $rule->count)];
         }
 
@@ -60,6 +66,24 @@ class QuestionPicker
             )
             ->whereBetween('difficulty', [$rule->difficulty_min, $rule->difficulty_max])
             ->pluck('id')->map(fn ($id) => (int) $id)->all();
+    }
+
+    /**
+     * Practice questions show their answers in the lesson, so exams use them only to fill gaps.
+     *
+     * @param  list<int>  $candidates
+     * @return array<int, true>
+     */
+    private function practiceIds(array $candidates): array
+    {
+        if ($candidates === []) {
+            return [];
+        }
+
+        return array_fill_keys(
+            DB::table('lesson_question')->whereIn('question_id', $candidates)->distinct()->pluck('question_id')->map(fn ($id) => (int) $id)->all(),
+            true,
+        );
     }
 
     /**

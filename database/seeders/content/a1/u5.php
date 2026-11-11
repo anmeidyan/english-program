@@ -28,6 +28,7 @@ return [
         [
             'title' => "Simple Present: don't / doesn't / Do you...?",
             'type' => 'grammar',
+            'generator' => ['topic' => 'do_does', 'count' => 40],
             'minutes' => 20,
             'blocks' => [
                 B::heading('Kalimat negatif dan pertanyaan'),
@@ -93,6 +94,18 @@ return [
         [
             'title' => 'Reading: Breakfast Around the World',
             'type' => 'reading',
+            'quiz_passage' => 'Street food is very popular in Indonesia. In the morning, many people buy bubur ayam, a rice porridge with chicken. At lunchtime, you can find bakso, a meatball soup, on almost every street. In the evening, martabak is a favourite. Sweet martabak has chocolate or cheese inside. Street food is cheap and delicious, but some people prefer to cook at home because it is healthier.',
+            'quiz_passage_title' => 'Street Food in Indonesia',
+            'quiz_questions' => [
+                Q::mcq('What do many people eat in the morning?', ['bubur ayam', 'bakso', 'martabak', 'pancakes'], 0),
+                Q::mcq('What is bakso?', ['a meatball soup', 'a rice porridge', 'a sweet cake', 'a drink'], 0),
+                Q::tf('Martabak is popular in the evening.', 'true'),
+                Q::tf('Sweet martabak has chicken inside.', 'false', 'It has chocolate or cheese.'),
+                Q::tf('Street food is expensive.', 'false', 'It is cheap.'),
+                Q::mcq('Why do some people cook at home?', ['It is healthier.', 'It is cheaper.', 'It is faster.', 'They do not like rice.'], 0),
+                Q::tf('Bakso is the most popular food in Indonesia.', 'not_given'),
+                Q::mcq('What is the main idea of the text?', ['Street food in Indonesia', 'How to cook bakso', 'Breakfast in Japan', 'Healthy restaurants'], 0),
+            ],
             'minutes' => 15,
             'passage' => "What do people eat for breakfast? It is different in every country. In Indonesia, many people eat rice for breakfast. Nasi uduk and nasi goreng are very popular. In England, some people have a 'full English breakfast' with eggs, sausages, beans and toast, but most people have cereal or toast on weekdays. In Japan, a traditional breakfast has rice, fish and miso soup. In France, people often have bread with butter and jam, and a cup of coffee. And in the United States, pancakes are a favourite on weekends. What do you have for breakfast?",
             'blocks' => [
@@ -114,6 +127,17 @@ return [
         [
             'title' => 'Listening: At a Café',
             'type' => 'listening',
+            'quiz_audio' => 'Hello, can I help you? — Yes, I\'d like two coffees and a chocolate cake, please. — Large or small coffees? — Small, please. And can I have some water? — Sure. Is that all? — Yes, thanks. How much is it? — That\'s eleven dollars, please.',
+            'quiz_questions' => [
+                Q::mcq('How many coffees does the customer order?', ['one', 'two', 'three', 'four'], 1),
+                Q::mcq('What size are the coffees?', ['small', 'large', 'medium', 'one small, one large'], 0),
+                Q::mcq('What does the customer order to eat?', ['a cheese sandwich', 'a chocolate cake', 'rice and chicken', 'an apple'], 1),
+                Q::mcq('How much is it?', ['$7', '$11', '$12', '$17'], 1),
+                Q::tf('The customer orders juice.', 'false'),
+                Q::tf('The customer asks for some water.', 'true'),
+                Q::dict('Can I have some water?'),
+                Q::mcq('"Is that all?" means ___.', ['Do you want anything else?', 'Is it expensive?', 'Are you hungry?', 'Is the food ready?'], 0),
+            ],
             'minutes' => 15,
             'audio' => "Good morning. What can I get you? — Can I have a cheese sandwich, please? — Sure. Anything to drink? — Yes, an orange juice, please. Oh, and a bottle of water. — Small or large water? — Small, please. How much is that? — That's eight dollars fifty. — Here you are. — Thank you. Enjoy your meal!",
             'blocks' => [
@@ -141,6 +165,7 @@ return [
         [
             'title' => 'Speaking: Ordering Food',
             'type' => 'speaking',
+            'generator' => ['topic' => 'functional_language', 'count' => 30],
             'minutes' => 20,
             'blocks' => [
                 B::heading('"Can" untuk meminta dan kemampuan'),

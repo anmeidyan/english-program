@@ -28,6 +28,7 @@ return [
         [
             'title' => 'Verb "to be": am, is, are',
             'type' => 'grammar',
+            'generator' => ['topic' => 'to_be', 'count' => 40],
             'minutes' => 15,
             'blocks' => [
                 B::heading('Apa itu verb "to be"?'),
@@ -104,6 +105,18 @@ return [
         [
             'title' => 'Reading: Hello from Bandung',
             'type' => 'reading',
+            'quiz_passage' => 'This is my new classmate, Lucas. He is from São Paulo, Brazil. He is twenty-two years old. He is a student in my English class. His sister, Julia, is a doctor in Jakarta. Lucas is very friendly and he is good at football. Our English class is at seven o\'clock in the evening.',
+            'quiz_passage_title' => 'My New Classmate',
+            'quiz_questions' => [
+                Q::mcq('Where is Lucas from?', ['Brazil', 'Jakarta', 'Japan', 'England'], 0),
+                Q::mcq('How old is Lucas?', ['twenty', 'twenty-two', 'twenty-five', 'twelve'], 1),
+                Q::tf('Julia is a student.', 'false', 'Julia is a doctor.'),
+                Q::tf('Lucas is good at football.', 'true'),
+                Q::tf('Lucas is married.', 'not_given'),
+                Q::mcq('Who is Julia?', ['Lucas\'s sister', 'Lucas\'s teacher', 'Lucas\'s mother', 'a student'], 0),
+                Q::mcq('What time is the English class?', ['seven o\'clock in the morning', 'seven o\'clock in the evening', 'eleven o\'clock', 'two o\'clock'], 1),
+                Q::mcq('What is the text about?', ['a new classmate', 'a football match', 'a hospital in Jakarta', 'Brazilian food'], 0),
+            ],
             'minutes' => 15,
             'passage' => 'Hi! My name is Rina Putri. I am twenty years old and I am from Bandung, Indonesia. I am a student at a university in Jakarta. My best friend is Kenji. He is from Osaka, Japan. He is a student too. Kenji and I are in the same English class. Our teacher is Mr. Brown. He is from London. He is very nice!',
             'blocks' => [
@@ -127,6 +140,17 @@ return [
         [
             'title' => 'Listening: Nice to Meet You',
             'type' => 'listening',
+            'quiz_audio' => 'Hi, I\'m Kenji. — Hello Kenji, I\'m Laura. Where are you from? — I\'m from Osaka, in Japan. And you? — I\'m from Toronto, Canada. Are you a student? — No, I\'m not. I\'m an engineer. — Oh, nice! I\'m a student here.',
+            'quiz_questions' => [
+                Q::mcq('Where is Kenji from?', ['Osaka', 'Toronto', 'Tokyo', 'London'], 0),
+                Q::mcq('Where is Laura from?', ['Japan', 'Canada', 'England', 'Australia'], 1),
+                Q::mcq('What is Kenji\'s job?', ['student', 'teacher', 'engineer', 'doctor'], 2),
+                Q::tf('Laura is a student.', 'true'),
+                Q::tf('Kenji is a student.', 'false', 'He\'s an engineer.'),
+                Q::dict('I\'m from Toronto, Canada.'),
+                Q::dict('Are you a student?'),
+                Q::fill('I\'m from Osaka, ___ Japan.', [['in']]),
+            ],
             'minutes' => 15,
             'audio' => "Hello! I'm David. What's your name? — Hi, David. I'm Sari. Nice to meet you. — Nice to meet you too. Where are you from, Sari? — I'm from Surabaya. And you? — I'm from Sydney, Australia. I'm a nurse. — Oh, really? I'm a teacher.",
             'blocks' => [
@@ -154,6 +178,7 @@ return [
         [
             'title' => 'Speaking: Introducing Yourself',
             'type' => 'speaking',
+            'generator' => ['topic' => 'functional_language', 'count' => 30],
             'minutes' => 20,
             'blocks' => [
                 B::heading('Memperkenalkan diri'),

@@ -28,6 +28,7 @@ return [
         [
             'title' => 'There is / There are + Prepositions of Place',
             'type' => 'grammar',
+            'generator' => ['topic' => 'there_is_are', 'count' => 40],
             'minutes' => 15,
             'blocks' => [
                 B::heading('There is / There are = "ada"'),
@@ -90,6 +91,18 @@ return [
         [
             'title' => 'Reading: My Flat in the City',
             'type' => 'reading',
+            'quiz_passage' => 'We live in a big house in a small village near Bogor. There are four bedrooms, two bathrooms, a kitchen and a large living room. Behind the house there is a garden with mango trees. My bedroom is upstairs. There is a bed, a desk and a big window in my room. From my window I can see the mountains. There isn\'t a garage, so my father parks his car in front of the house.',
+            'quiz_passage_title' => 'Our House in the Village',
+            'quiz_questions' => [
+                Q::mcq('Where is the house?', ['in a village near Bogor', 'in the centre of Jakarta', 'near the beach', 'in Bandung'], 0),
+                Q::mcq('How many bedrooms are there?', ['two', 'three', 'four', 'five'], 2),
+                Q::tf('There is a garden behind the house.', 'true'),
+                Q::tf('The writer\'s bedroom is downstairs.', 'false', 'It is upstairs.'),
+                Q::mcq('What can the writer see from the window?', ['the sea', 'the mountains', 'the city', 'the garage'], 1),
+                Q::mcq('Where does the father park his car?', ['in the garage', 'in front of the house', 'behind the house', 'in the garden'], 1),
+                Q::tf('There are apple trees in the garden.', 'false', 'There are mango trees.'),
+                Q::tf('The house has a swimming pool.', 'not_given'),
+            ],
             'minutes' => 15,
             'passage' => "I live in a small flat in Jakarta. It is on the tenth floor. There is one bedroom, a bathroom, a kitchen and a living room. There isn't a garden, but there is a balcony with lots of plants. In the living room there is a blue sofa and a big window. My desk is next to the window, so I can see the city when I study. The kitchen is very small. There are two chairs and a little table in it. I love my flat because it is quiet and bright.",
             'blocks' => [
@@ -111,6 +124,17 @@ return [
         [
             'title' => 'Listening: Where Are My Keys?',
             'type' => 'listening',
+            'quiz_audio' => 'Excuse me, where\'s the bathroom? — It\'s upstairs, next to the big bedroom. — Thanks. And where are the towels? — They\'re in the cupboard behind the door. — Great. Is there a hair dryer? — Yes, there is. It\'s on the shelf under the mirror.',
+            'quiz_questions' => [
+                Q::mcq('Where is the bathroom?', ['downstairs, next to the kitchen', 'upstairs, next to the big bedroom', 'behind the door', 'in the garden'], 1),
+                Q::mcq('Where are the towels?', ['on the shelf', 'in the cupboard behind the door', 'under the mirror', 'in the bedroom'], 1),
+                Q::tf('There is a hair dryer.', 'true'),
+                Q::mcq('Where is the hair dryer?', ['in the cupboard', 'on the shelf under the mirror', 'next to the bed', 'behind the door'], 1),
+                Q::tf('The bathroom is downstairs.', 'false', 'It\'s upstairs.'),
+                Q::dict('It\'s on the shelf.'),
+                Q::fill('They\'re in the cupboard ___ the door.', [['behind']]),
+                Q::mcq('"Excuse me" is used to ___.', ['politely get attention', 'say goodbye', 'say thank you', 'say sorry for being late'], 0),
+            ],
             'minutes' => 15,
             'audio' => "Mum, where are my keys? — Look on the table in the kitchen. — They aren't there. — OK. Look in your bag. — No, they aren't in my bag. — Are they under the sofa? — Hmm... no. Oh wait! They're on the shelf next to the door. — Good! Now hurry up, and don't forget your phone!",
             'blocks' => [
@@ -134,6 +158,7 @@ return [
         [
             'title' => 'Speaking: Describing Your Room',
             'type' => 'speaking',
+            'generator' => ['topic' => 'functional_language', 'count' => 30],
             'minutes' => 20,
             'blocks' => [
                 B::heading('Mendeskripsikan kamar'),

@@ -12,7 +12,9 @@ use App\Services\Grading\QuestionPresenter;
 use App\Services\LessonService;
 use App\Services\Progress\UnlockService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
+use Random\Randomizer;
 
 class LessonController extends Controller
 {
@@ -38,9 +40,19 @@ class LessonController extends Controller
             'preview' => $preview,
             'status' => $this->progress->status($user, $lesson),
             'row' => $this->progress->find($user, $lesson),
-            'questions' => $lesson->questions->map(fn ($q) => $this->presenter->present($q, QuestionPresenter::MODE_PRACTICE))->values(),
+            // new order and option order on every visit, so practice is not learnt by position
+            'questions' => $this->shuffledPractice($lesson),
             'siblings' => $this->curriculum->lessonsOfUnit($lesson->unit),
             'remedial' => $this->unlock->pendingRemedialFor($user, $lesson),
         ]);
+    }
+
+    /** @return Collection<int, array<string, mixed>> */
+    private function shuffledPractice(Lesson $lesson): Collection
+    {
+        $seed = random_int(1, 1_000_000_000);
+        $questions = (new Randomizer)->shuffleArray($lesson->questions->all());
+
+        return collect($questions)->map(fn ($q) => $this->presenter->present($q, QuestionPresenter::MODE_PRACTICE, $seed))->values();
     }
 }
