@@ -1,9 +1,9 @@
 name: CI
 
+# Manual only (Actions tab → CI → Run workflow). Automatic runs are disabled;
+# to re-enable, add back:  push: { branches: [main] }  and  pull_request:
 on:
-  push:
-    branches: [main]
-  pull_request:
+  workflow_dispatch:
 
 jobs:
   test:
