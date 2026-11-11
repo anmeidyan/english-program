@@ -7,7 +7,7 @@
 
         <div class="grid lg:grid-cols-3 gap-5">
             {{-- continue learning --}}
-            <section class="lg:col-span-2 rounded-2xl bg-gradient-to-br from-brand-600 to-brand-800 text-white p-6 shadow-sm" aria-labelledby="next-title">
+            <section class="lg:col-span-2 rounded-2xl bg-gradient-to-br from-brand-600 to-brand-800 dark:from-brand-800 dark:to-brand-900 text-white p-6 shadow-sm" aria-labelledby="next-title">
                 <p class="text-sm text-brand-100" id="next-title">{{ __('Lanjutkan belajar') }}</p>
                 @php $m = $next['model']; @endphp
                 <h2 class="text-xl font-bold mt-1">
@@ -21,7 +21,7 @@
                     @endswitch
                 </h2>
                 @if ($next['status'])<p class="text-sm text-brand-100 mt-1">{{ $next['status']->label() }}</p>@endif
-                <a href="{{ $next['url'] }}" class="mt-4 inline-flex items-center gap-2 rounded-xl bg-white text-brand-700 px-5 py-2.5 font-semibold hover:bg-brand-50">
+                <a href="{{ $next['url'] }}" class="mt-4 inline-flex items-center gap-2 rounded-xl bg-white text-brand-700 px-5 py-2.5 font-semibold hover:bg-brand-50 dark:bg-slate-900/60 dark:text-slate-100 dark:hover:bg-slate-900">
                     {{ $next['kind'] === 'lesson' ? __('Mulai lesson') : __('Buka') }} →
                 </a>
                 @if ($levelProgress)

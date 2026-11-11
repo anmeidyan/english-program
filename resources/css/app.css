@@ -7,7 +7,16 @@
 @source '../js/**/*.js';
 
 /* dark mode: follows system unless <html data-theme="light|dark"> is set */
-@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *), @media (prefers-color-scheme: dark) { &:where(:not([data-theme=light]), :not([data-theme=light]) *) });
+@custom-variant dark {
+    [data-theme=dark] & {
+        @slot;
+    }
+    @media (prefers-color-scheme: dark) {
+        :root:not([data-theme=light]) & {
+            @slot;
+        }
+    }
+}
 
 @theme {
     --font-sans: 'Figtree', ui-sans-serif, system-ui, sans-serif;
@@ -24,6 +33,101 @@
 }
 
 [x-cloak] { display: none !important; }
+
+/* dark palette — system preference, or forced with <html data-theme="dark"> */
+@layer base {
+    [data-theme=dark] {
+    color-scheme: dark;
+    /* "dimmed" dark palette: soft blue-grey surfaces and off-white text instead of
+       near-black + pure white, to cut glare (contrast stays ≥ WCAG AA) */
+    --color-slate-950: #1c2128;
+    --color-slate-900: #22272e;
+    --color-slate-800: #2d333b;
+    --color-slate-700: #444c56;
+    --color-slate-600: #545d68;
+    --color-slate-500: #768390;
+    --color-slate-400: #909dab;
+    --color-slate-300: #adbac7;
+    --color-slate-200: #c5d1de;
+    --color-slate-100: #cdd9e5;
+    --color-gray-950: #1c2128;
+    --color-gray-900: #22272e;
+    --color-gray-800: #2d333b;
+    --color-gray-700: #444c56;
+    --color-gray-600: #545d68;
+    --color-gray-500: #768390;
+    --color-gray-400: #909dab;
+    --color-gray-300: #adbac7;
+    --color-gray-200: #c5d1de;
+    --color-gray-100: #cdd9e5;
+    --color-white: #e1e7ed;
+    --color-brand-300: #8fb3ec;
+    --color-brand-500: #4479d1;
+    --color-brand-600: #3466bd;
+    --color-brand-700: #2d589f;
+    --color-brand-800: #264a84;
+    --color-brand-900: #1f3a66;
+    --color-emerald-950: #1f3329;
+    --color-red-950: #3a2226;
+    --color-sky-950: #1d2e3d;
+    --color-amber-950: #3a2f1c;
+    /* light status tints (chips, banners) become dark tints with light text */
+    --color-emerald-50: #1f3329; --color-emerald-100: #23402f; --color-emerald-800: #8ddba8; --color-emerald-900: #a6e4bb;
+    --color-red-50: #3a2226; --color-red-100: #4a262b; --color-red-800: #f2a5ad; --color-red-900: #f6bcc2;
+    --color-sky-50: #1d2e3d; --color-sky-100: #213a4f; --color-sky-800: #9ccdf0; --color-sky-900: #b6daf4;
+    --color-amber-50: #3a2f1c; --color-amber-100: #4a3a1e; --color-amber-800: #ecc77e; --color-amber-900: #f0d397;
+    }
+    @media (prefers-color-scheme: dark) {
+        :root:not([data-theme=light]) {
+    color-scheme: dark;
+    /* "dimmed" dark palette: soft blue-grey surfaces and off-white text instead of
+       near-black + pure white, to cut glare (contrast stays ≥ WCAG AA) */
+    --color-slate-950: #1c2128;
+    --color-slate-900: #22272e;
+    --color-slate-800: #2d333b;
+    --color-slate-700: #444c56;
+    --color-slate-600: #545d68;
+    --color-slate-500: #768390;
+    --color-slate-400: #909dab;
+    --color-slate-300: #adbac7;
+    --color-slate-200: #c5d1de;
+    --color-slate-100: #cdd9e5;
+    --color-gray-950: #1c2128;
+    --color-gray-900: #22272e;
+    --color-gray-800: #2d333b;
+    --color-gray-700: #444c56;
+    --color-gray-600: #545d68;
+    --color-gray-500: #768390;
+    --color-gray-400: #909dab;
+    --color-gray-300: #adbac7;
+    --color-gray-200: #c5d1de;
+    --color-gray-100: #cdd9e5;
+    --color-white: #e1e7ed;
+    --color-brand-300: #8fb3ec;
+    --color-brand-500: #4479d1;
+    --color-brand-600: #3466bd;
+    --color-brand-700: #2d589f;
+    --color-brand-800: #264a84;
+    --color-brand-900: #1f3a66;
+    --color-emerald-950: #1f3329;
+    --color-red-950: #3a2226;
+    --color-sky-950: #1d2e3d;
+    --color-amber-950: #3a2f1c;
+    /* light status tints (chips, banners) become dark tints with light text */
+    --color-emerald-50: #1f3329; --color-emerald-100: #23402f; --color-emerald-800: #8ddba8; --color-emerald-900: #a6e4bb;
+    --color-red-50: #3a2226; --color-red-100: #4a262b; --color-red-800: #f2a5ad; --color-red-900: #f6bcc2;
+    --color-sky-50: #1d2e3d; --color-sky-100: #213a4f; --color-sky-800: #9ccdf0; --color-sky-900: #b6daf4;
+    --color-amber-50: #3a2f1c; --color-amber-100: #4a3a1e; --color-amber-800: #ecc77e; --color-amber-900: #f0d397;
+        }
+    }
+    [data-theme=dark] img:not([src$=".svg"]),
+    [data-theme=dark] video { filter: brightness(.88); }
+    @media (prefers-color-scheme: dark) {
+        :root:not([data-theme=light]) img:not([src$=".svg"]),
+        :root:not([data-theme=light]) video { filter: brightness(.88); }
+    }
+}
+
 
 @layer components {
     .card { @apply rounded-2xl bg-white dark:bg-slate-900 ring-1 ring-slate-200 dark:ring-slate-800 shadow-xs; }
