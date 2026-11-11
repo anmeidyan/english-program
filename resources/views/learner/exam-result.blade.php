@@ -61,8 +61,8 @@
                 @foreach ($review as $item)
                     <div class="border-t border-slate-100 dark:border-slate-800 pt-3 text-sm space-y-1">
                         <p class="font-medium">{{ $item['prompt'] }}</p>
-                        <p class="text-red-700 dark:text-red-300">{{ __('Jawabanmu') }}: {{ is_array($item['your_answer']) ? json_encode($item['your_answer'], JSON_UNESCAPED_UNICODE) : ($item['your_answer'] ?? '—') }}</p>
-                        <p class="text-emerald-700 dark:text-emerald-300">{{ __('Jawaban benar') }}: {{ is_array($item['correct']) ? implode(' / ', array_map(fn ($v) => is_array($v) ? implode(', ', $v) : $v, $item['correct'])) : $item['correct'] }}</p>
+                        <p class="text-red-700 dark:text-red-300">{{ __('Jawabanmu') }}: {{ $item['your_answer'] }}</p>
+                        <p class="text-emerald-700 dark:text-emerald-300">{{ __('Jawaban benar') }}: {{ $item['correct'] }}</p>
                         @if ($item['explanation'])<p class="text-slate-600 dark:text-slate-400">{{ $item['explanation'] }}</p>@endif
                     </div>
                 @endforeach
@@ -79,7 +79,7 @@
                     <div class="text-sm border-t border-slate-100 dark:border-slate-800 pt-3">
                         <p class="font-medium capitalize">{{ $sub->type }} — {{ $sub->status->value === 'reviewed' ? __('sudah dinilai') : __('menunggu penilaian') }}</p>
                         @if ($sub->final_score)
-                            <p class="text-slate-600 dark:text-slate-300">@foreach ($sub->final_score as $k => $v){{ str_replace('_', ' ', $k) }}: {{ $v }}/9@if(! $loop->last) · @endif @endforeach</p>
+                            <p class="text-slate-600 dark:text-slate-300">@foreach ($sub->final_score as $k => $v){{ str_replace('_', ' ', $k) }}: {{ $v }}/9 @if (! $loop->last) · @endif @endforeach</p>
                         @endif
                         @if ($sub->feedback)<p class="mt-1">{{ $sub->feedback }}</p>@endif
                         @foreach ($sub->inline_feedback ?? [] as $note)

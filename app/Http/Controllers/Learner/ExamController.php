@@ -83,8 +83,8 @@ class ExamController extends Controller
                     $review[] = [
                         'prompt' => $q->prompt,
                         'type' => $q->type->value,
-                        'your_answer' => $answer->answer,
-                        'correct' => $this->graders->correctAnswer($q),
+                        'your_answer' => $this->readable($q, $answer->answer),
+                        'correct' => $this->readable($q, $this->graders->correctAnswer($q)),
                         'explanation' => $q->explanation,
                     ];
                 }
@@ -100,5 +100,54 @@ class ExamController extends Controller
             'remedials' => $this->remedial->pending($attempt->user)->filter(fn ($t) => $t->exam_attempt_id === $attempt->id),
             'nextUrl' => $this->unlock->nextActionUrl($attempt->user),
         ]);
+    }
+
+    /** Turns option keys / token lists / pairs into the text the learner saw. */
+    private function readable(Question $q, mixed $value): string
+    {
+        if ($value === null || $value === '' || $value === []) {
+            return '—';
+        }
+        $payload = $q->payload ?? [];
+        $options = [];
+        foreach ((array) ($payload['options'] ?? []) as $option) {
+            if (is_array($option) && isset($option['key'])) {
+                $options[$option['key']] = (string) ($option['text'] ?? $option['key']);
+            }
+        }
+        $optionText = fn ($key) => $options[$key] ?? (string) $key;
+
+        return match ($q->type->value) {
+            'mcq_single' => (string) $optionText($value),
+            'mcq_multi' => implode(', ', array_map($optionText, (array) $value)),
+            'true_false_ng' => ['true' => 'True', 'false' => 'False', 'not_given' => 'Not Given'][$value] ?? (string) $value,
+            'matching' => $this->matchingText((array) $value, (array) ($payload['left'] ?? []), (array) ($payload['right'] ?? [])),
+            'word_order' => is_array($value) ? implode(' ', $value) : (string) $value,
+            default => is_array($value) ? implode(' / ', array_map(fn ($v) => is_array($v) ? implode(', ', $v) : (string) $v, $value)) : (string) $value,
+        };
+    }
+
+    /**
+     * @param  array<mixed>  $pairs
+     * @param  array<mixed>  $left
+     * @param  array<mixed>  $right
+     */
+    private function matchingText(array $pairs, array $left, array $right): string
+    {
+        $text = function (array $items, mixed $key): string {
+            foreach ($items as $item) {
+                if (is_array($item) && ($item['key'] ?? null) === $key) {
+                    return (string) ($item['text'] ?? $key);
+                }
+            }
+
+            return (string) $key;
+        };
+        $parts = [];
+        foreach ($pairs as $l => $r) {
+            $parts[] = $text($left, $l).' → '.$text($right, $r);
+        }
+
+        return implode('; ', $parts);
     }
 }
