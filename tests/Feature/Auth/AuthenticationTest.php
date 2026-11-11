@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use Database\Seeders\DemoUserSeeder;
 use Livewire\Volt\Volt;
 
 test('login screen can be rendered', function () {
@@ -69,4 +70,22 @@ test('users can logout', function () {
         ->assertRedirect('/');
 
     $this->assertGuest();
+});
+
+test('login page lists the demo accounts and signs in with one click', function () {
+    $this->seed(DemoUserSeeder::class);
+
+    $this->get('/login')->assertOk()->assertSee('Akses demo')->assertSee('student@demo.test')->assertSee('admin@demo.test');
+
+    Volt::test('pages.auth.login')->call('loginAs', 'student@demo.test')->assertRedirect(route('dashboard', absolute: false));
+    $this->assertAuthenticatedAs(User::where('email', 'student@demo.test')->first());
+});
+
+test('one-click login only accepts the listed demo accounts and can be disabled', function () {
+    $user = User::factory()->create(['email' => 'someone@example.com']);
+    Volt::test('pages.auth.login')->call('loginAs', $user->email)->assertForbidden();
+
+    config(['englishpath.demo_logins.enabled' => false]);
+    $this->get('/login')->assertOk()->assertDontSee('Akses demo');
+    Volt::test('pages.auth.login')->call('loginAs', 'student@demo.test')->assertForbidden();
 });

@@ -20,6 +20,8 @@ Buka http://localhost:8080 (atau `APP_PORT` di `.env`).
 | Content admin | `content@demo.test` | `password` |
 | Reviewer | `reviewer@demo.test` | `password` |
 
+Akun-akun ini juga tampil di halaman login (kotak **Akses demo**, klik untuk langsung masuk). Matikan dengan `SHOW_DEMO_LOGINS=false` di `.env`.
+
 Admin: `/admin` · Horizon: `/horizon` · Mailpit: http://localhost:8025
 
 ### Perintah Makefile

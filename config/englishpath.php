@@ -1,6 +1,18 @@
 <?php
 
 return [
+    // Personal install: list the demo accounts on the login page with one-click sign-in.
+    'demo_logins' => [
+        'enabled' => (bool) env('SHOW_DEMO_LOGINS', true),
+        'password' => 'password',
+        'accounts' => [
+            ['email' => 'student@demo.test', 'role' => 'Pelajar'],
+            ['email' => 'admin@demo.test', 'role' => 'Super admin'],
+            ['email' => 'content@demo.test', 'role' => 'Content admin'],
+            ['email' => 'reviewer@demo.test', 'role' => 'Reviewer'],
+        ],
+    ],
+
     'speech' => [
         // browser = Web Speech API in the learner's browser; whisper = server-side transcription via queue
         'driver' => env('SPEECH_DRIVER', 'browser'),
