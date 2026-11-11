@@ -1,4 +1,4 @@
-import { registerSW } from 'virtual:pwa-register';
+import { Workbox } from 'workbox-window';
 import { flushQueue } from './offline';
 
 export function pwaStore(Alpine) {
@@ -39,10 +39,12 @@ export function pwaStore(Alpine) {
             });
             window.addEventListener('appinstalled', () => (this.canInstall = false));
             if ('serviceWorker' in navigator && import.meta.env.PROD) {
-                updateSW = registerSW({
-                    onNeedRefresh: () => (this.updateReady = true),
-                    onRegisteredSW: () => flushQueue(),
-                });
+                // served at /sw.js by nginx (Service-Worker-Allowed: /) so it controls the whole app
+                const wb = new Workbox('/sw.js', { scope: '/' });
+                wb.addEventListener('waiting', () => (this.updateReady = true));
+                wb.addEventListener('controlling', () => window.location.reload());
+                wb.register().then(() => flushQueue()).catch(() => {});
+                updateSW = () => wb.messageSkipWaiting();
             }
             flushQueue();
         },
@@ -62,7 +64,7 @@ export function pwaStore(Alpine) {
             try { localStorage.setItem('ep-install-dismissed', '1'); } catch (e) { /* noop */ }
         },
         reload() {
-            updateSW ? updateSW(true) : window.location.reload();
+            updateSW ? updateSW() : window.location.reload();
         },
     });
 }
