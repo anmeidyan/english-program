@@ -32,14 +32,14 @@ class ReviewSubmission extends EditRecord
 
         $answerView = $submission->type === 'speaking'
             ? ($submission->file_path
-                ? '<audio controls preload="none" class="w-full" src="'.e(URL::temporarySignedRoute('recordings.show', now()->addHour(), $submission)).'"></audio>'
+                ? '<audio controls preload="none" class="w-full" src="'.e(URL::temporarySignedRoute('recordings.show', now()->addHour(), ['submission' => $submission->id])).'"></audio>'
                 : '<em>Tidak ada rekaman.</em>')
               .'<p class="mt-2 text-sm"><strong>Transkrip (STT):</strong> '.e((string) $submission->transcript).'</p>'
             : '<div class="whitespace-pre-line text-sm">'.e((string) $submission->text).'</div><p class="text-xs mt-2">'.str_word_count((string) $submission->text).' kata</p>';
 
         $draft = $submission->ai_score
             ? '<p class="text-sm"><strong>Draf AI ('.e((string) ($submission->ai_score['model'] ?? 'AI')).'):</strong> '
-              .e(collect($submission->ai_score['scores'] ?? [])->map(fn ($v, $k) => "{$k}: {$v}")->implode(', ')).'<br>'.e((string) ($submission->ai_score['feedback'] ?? '')).'</p>'
+              .e(implode(', ', array_map(fn ($k, $v) => "{$k}: {$v}", array_keys((array) ($submission->ai_score['scores'] ?? [])), (array) ($submission->ai_score['scores'] ?? [])))).'<br>'.e((string) ($submission->ai_score['feedback'] ?? '')).'</p>'
             : '';
 
         return $form->schema([

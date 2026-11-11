@@ -14,7 +14,6 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 
 /** Exam settings + question pool rules (PRD 7.1). Every lesson/unit/level/tense gets one automatically. */
 class ExamResource extends Resource
@@ -60,12 +59,6 @@ class ExamResource extends Resource
             ])
             ->filters([Tables\Filters\SelectFilter::make('type')->options(ExamType::options())])
             ->actions([Tables\Actions\EditAction::make()]);
-    }
-
-    /** @return Builder<Exam> */
-    public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()->withoutTrashed();
     }
 
     public static function getRelations(): array

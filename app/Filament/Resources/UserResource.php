@@ -89,6 +89,7 @@ class UserResource extends Resource
         ];
     }
 
+    /** @param list<string> $before */
     public static function auditRoleChange(User $user, array $before): void
     {
         $after = $user->roles()->pluck('name')->sort()->values()->all();

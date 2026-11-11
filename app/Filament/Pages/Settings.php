@@ -13,7 +13,9 @@ use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 
-/** PRD 7.1 Settings: default passing scores, cooldowns, review SLA, AI grader on/off. */
+/** PRD 7.1 Settings: default passing scores, cooldowns, review SLA, AI grader on/off. *
+ * @property Form $form
+ */
 class Settings extends Page implements HasForms
 {
     use InteractsWithForms;

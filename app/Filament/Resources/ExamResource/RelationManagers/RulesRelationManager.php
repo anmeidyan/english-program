@@ -6,6 +6,7 @@ namespace App\Filament\Resources\ExamResource\RelationManagers;
 
 use App\Enums\QuestionType;
 use App\Enums\Skill;
+use App\Models\Exam;
 use App\Models\ExamQuestionRule;
 use App\Services\Exam\QuestionPicker;
 use Filament\Forms;
@@ -54,6 +55,7 @@ class RulesRelationManager extends RelationManager
 
     private function syncCount(): void
     {
+        /** @var Exam $exam */
         $exam = $this->getOwnerRecord();
         $exam->update(['question_count' => (int) $exam->rules()->sum('count')]);
     }

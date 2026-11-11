@@ -45,7 +45,7 @@ class QuestionResource extends Resource
                 Forms\Components\Select::make('type')->options(QuestionType::options())->required()->live(),
                 Forms\Components\Select::make('skill')->options(Skill::options())->required(),
                 Forms\Components\Select::make('level_id')->relationship('level', 'name'),
-                Forms\Components\Select::make('difficulty')->options(array_combine(range(1, 5), range(1, 5)))->default(1)->required(),
+                Forms\Components\Select::make('difficulty')->options(['1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5'])->default(1)->required(),
                 Forms\Components\Textarea::make('prompt')->required()->columnSpanFull(),
                 Forms\Components\TextInput::make('points')->numeric()->minValue(1)->default(1),
                 Forms\Components\Toggle::make('is_active')->default(true)->inline(false),

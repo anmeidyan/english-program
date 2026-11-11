@@ -28,7 +28,11 @@ class ReportService
         ];
     }
 
-    /** Learners who reached / passed each level. @return Collection<int, array{level: string, reached: int, passed: int}> */
+    /**
+     * Learners who reached / passed each level.
+     *
+     * @return Collection<int, array{level: string, reached: int, passed: int}>
+     */
     public function funnel(): Collection
     {
         return Level::query()->orderBy('sort_order')->get()->map(fn (Level $level) => [
@@ -39,7 +43,7 @@ class ReportService
         ]);
     }
 
-    /** @return Collection<int, object> */
+    /** @return Collection<int, \stdClass> */
     public function examStats(int $limit = 25): Collection
     {
         return DB::table('exam_attempts as a')->join('exams as e', 'e.id', '=', 'a.exam_id')
@@ -49,7 +53,11 @@ class ReportService
             ->orderByDesc('attempts')->limit($limit)->get();
     }
 
-    /** Questions answered wrong most often — candidates for review. @return Collection<int, object> */
+    /**
+     * Questions answered wrong most often — candidates for review.
+     *
+     * @return Collection<int, \stdClass>
+     */
     public function mostMissed(int $limit = 20): Collection
     {
         return DB::table('attempt_answers as aa')->join('questions as q', 'q.id', '=', 'aa.question_id')

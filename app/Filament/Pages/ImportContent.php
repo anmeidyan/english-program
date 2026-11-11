@@ -14,7 +14,9 @@ use Filament\Pages\Page;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
-/** PRD 7.2: import curriculum (JSON) or questions (CSV) on the queue with a per-row error report. */
+/** PRD 7.2: import curriculum (JSON) or questions (CSV) on the queue with a per-row error report. *
+ * @property Form $form
+ */
 class ImportContent extends Page implements HasForms
 {
     use InteractsWithForms;
