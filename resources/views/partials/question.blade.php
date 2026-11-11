@@ -69,7 +69,7 @@
     <template x-if="q.type === 'true_false_ng'">
         <div class="grid grid-cols-3 gap-2" role="radiogroup">
             <template x-for="opt in q.options" :key="opt">
-                <button type="button" role="radio" class="option justify-center" :class="isPicked(q, opt) && 'option-selected'" :aria-checked="isPicked(q, opt)"
+                <button type="button" role="radio" class="option justify-center!" :class="isPicked(q, opt) && 'option-selected'" :aria-checked="isPicked(q, opt)"
                         :disabled="locked(q)" @click="setAnswer(q, opt)" x-text="tfLabel(opt)"></button>
             </template>
         </div>

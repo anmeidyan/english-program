@@ -23,6 +23,7 @@ new class extends Component
     $user = auth()->user();
 @endphp
 
+<div>
 <nav x-data="{ open: false }" class="bg-white/90 dark:bg-slate-900/90 backdrop-blur border-b border-slate-200 dark:border-slate-800 sticky top-0 z-30">
     <div class="max-w-5xl mx-auto px-4 sm:px-6">
         <div class="flex justify-between h-14 items-center">
@@ -74,7 +75,9 @@ new class extends Component
         </div>
     </div>
 
-    {{-- bottom tab bar on mobile --}}
+</nav>
+
+{{-- bottom tab bar on mobile --}}
     <div class="sm:hidden fixed bottom-0 inset-x-0 z-30 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 grid grid-cols-4" style="padding-bottom: env(safe-area-inset-bottom)">
         @foreach ($links as $link)
             <a href="{{ route($link['route']) }}" @class(['flex flex-col items-center py-2 text-xs gap-0.5', 'text-brand-600' => request()->routeIs($link['match']), 'text-slate-500' => ! request()->routeIs($link['match'])])>
@@ -83,4 +86,4 @@ new class extends Component
             </a>
         @endforeach
     </div>
-</nav>
+</div>
