@@ -1,0 +1,21 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../views/**/*.blade.php';
+@source '../js/**/*.js';
+
+/* dark mode: follows system unless <html data-theme="light|dark"> is set */
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *), @media (prefers-color-scheme: dark) { &:where(:not([data-theme=light]), :not([data-theme=light]) *) });
+
+@theme {
+    --font-sans: 'Figtree', ui-sans-serif, system-ui, sans-serif;
+    --color-brand-50: #eef6ff;
+    --color-brand-100: #d9eaff;
+    --color-brand-500: #2f6fe4;
+    --color-brand-600: #1f57c4;
+    --color-brand-700: #1b469c;
+}
+
+[x-cloak] { display: none !important; }
