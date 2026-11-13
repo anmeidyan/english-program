@@ -16,6 +16,7 @@ class RateLimitServiceProvider extends ServiceProvider
     {
         RateLimiter::for('exam-submit', fn (Request $r) => Limit::perMinute(10)->by((string) ($r->user()->id ?? $r->ip())));
         RateLimiter::for('autosave', fn (Request $r) => Limit::perMinute(120)->by((string) ($r->user()->id ?? $r->ip())));
+        RateLimiter::for('speaking', fn (Request $r) => Limit::perMinute(12)->by((string) ($r->user()->id ?? $r->ip())));
         RateLimiter::for('api', fn (Request $r) => Limit::perMinute(240)->by((string) ($r->user()->id ?? $r->ip())));
     }
 }

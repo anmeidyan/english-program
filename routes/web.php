@@ -13,6 +13,7 @@ use App\Http\Controllers\Learner\LearningPathController;
 use App\Http\Controllers\Learner\LessonController;
 use App\Http\Controllers\Learner\LocaleController;
 use App\Http\Controllers\Learner\RecordingController;
+use App\Http\Controllers\Learner\SpeakingController;
 use App\Http\Controllers\Learner\TensesController;
 use App\Livewire\Onboarding;
 use App\Livewire\PlacementTest;
@@ -39,6 +40,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/tenses', [TensesController::class, 'index'])->name('tenses.index');
     Route::get('/tenses/{topic:slug}', [TensesController::class, 'show'])->name('tenses.show');
     Route::get('/flashcards', FlashcardPageController::class)->name('flashcards');
+    Route::get('/speaking', [SpeakingController::class, 'index'])->name('speaking');
     Route::get('/certificates', [CertificateController::class, 'index'])->name('certificates.index');
     Route::get('/certificates/{certificate:code}/download', [CertificateController::class, 'download'])->name('certificates.download');
     Route::get('/recordings/{submission}', RecordingController::class)->middleware('signed')->name('recordings.show');
@@ -63,6 +65,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/flashcards/{card}/review', [FlashcardController::class, 'review'])->name('flashcards.review');
         Route::post('/flashcards/words/{vocabulary}', [FlashcardController::class, 'add'])->name('flashcards.add');
         Route::get('/glossary', [FlashcardController::class, 'lookup'])->name('glossary');
+
+        Route::post('/speaking/turns', [SpeakingController::class, 'turn'])->middleware('throttle:speaking')->name('speaking.turn');
+        Route::post('/speaking/topic', [SpeakingController::class, 'changeTopic'])->name('speaking.topic');
 
         Route::post('/push/subscribe', [PushSubscriptionController::class, 'store'])->name('push.subscribe');
         Route::delete('/push/subscribe', [PushSubscriptionController::class, 'destroy'])->name('push.unsubscribe');

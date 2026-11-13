@@ -19,6 +19,7 @@ new class extends Component
         ['route' => 'learn', 'match' => 'learn*', 'label' => __('Belajar'), 'icon' => 'M4 19.5A2.5 2.5 0 016.5 17H20V3H6.5A2.5 2.5 0 004 5.5v14zM20 17v4H6.5'],
         ['route' => 'tenses.index', 'match' => 'tenses.*', 'label' => __('Tenses'), 'icon' => 'M12 8v4l3 3M21 12a9 9 0 11-18 0 9 9 0 0118 0z'],
         ['route' => 'flashcards', 'match' => 'flashcards', 'label' => __('Flashcard'), 'icon' => 'M4 6h16v12H4zM8 6V4h12v12h-2'],
+        ['route' => 'speaking', 'match' => 'speaking', 'label' => __('Speaking'), 'icon' => 'M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3zM19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8'],
     ];
     $user = auth()->user();
 @endphp

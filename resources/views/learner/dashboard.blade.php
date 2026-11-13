@@ -40,6 +40,13 @@
                 <div class="card p-4"><div class="text-2xl font-bold">⭐ {{ number_format($user->xp_total) }}</div><div class="text-xs text-slate-500">XP</div></div>
                 <a href="{{ route('flashcards') }}" class="card p-4 hover:ring-brand-400"><div class="text-2xl font-bold">🃏 {{ $dueCards }}</div><div class="text-xs text-slate-500">{{ __('kartu jatuh tempo') }}</div></a>
                 <div class="card p-4"><div class="text-2xl font-bold">🎯 {{ $user->daily_goal_minutes }}′</div><div class="text-xs text-slate-500">{{ __('target harian') }}</div></div>
+                <a href="{{ route('speaking') }}" class="card p-4 col-span-2 hover:ring-brand-400 flex items-center justify-between gap-3">
+                    <div>
+                        <div class="font-bold">🎙️ {{ __('Latihan speaking hari ini') }}</div>
+                        <div class="text-xs text-slate-500">{{ __(':done / :goal jawaban · langsung dikoreksi', ['done' => min($speakingToday, $speakingGoal), 'goal' => $speakingGoal]) }}</div>
+                    </div>
+                    <span class="text-sm font-semibold {{ $speakingToday >= $speakingGoal ? 'text-emerald-600' : 'text-brand-600' }}">{{ $speakingToday >= $speakingGoal ? '✓' : __('Mulai').' →' }}</span>
+                </a>
             </section>
         </div>
 

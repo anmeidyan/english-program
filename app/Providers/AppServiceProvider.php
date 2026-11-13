@@ -21,6 +21,9 @@ use App\Models\Vocabulary;
 use App\Services\Review\AiGraderInterface;
 use App\Services\Review\AnthropicAiGrader;
 use App\Services\Review\NullAiGrader;
+use App\Services\Speaking\AnthropicSpeakingCoach;
+use App\Services\Speaking\RuleBasedSpeakingCoach;
+use App\Services\Speaking\SpeakingCoachInterface;
 use App\Services\Speech\BrowserSpeechToText;
 use App\Services\Speech\SpeechToTextInterface;
 use App\Services\Speech\WhisperSpeechToText;
@@ -40,6 +43,11 @@ class AppServiceProvider extends ServiceProvider
             'anthropic' => new AnthropicAiGrader,
             default => new NullAiGrader,
         });
+
+        $this->app->bind(SpeakingCoachInterface::class, fn () => config('englishpath.speaking.coach') !== 'rules'
+            && config('englishpath.ai_grader.driver') === 'anthropic' && config('englishpath.ai_grader.api_key')
+            ? new AnthropicSpeakingCoach
+            : new RuleBasedSpeakingCoach);
 
         if ($this->app->environment('local') && class_exists(\Laravel\Telescope\TelescopeServiceProvider::class)) {
             $this->app->register(\Laravel\Telescope\TelescopeServiceProvider::class);

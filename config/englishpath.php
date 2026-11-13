@@ -26,6 +26,14 @@ return [
         'model' => env('AI_GRADER_MODEL'),
     ],
 
+    'speaking' => [
+        // auto = Claude when AI_GRADER_DRIVER=anthropic, else the offline rule-based coach; rules = always offline
+        'coach' => env('SPEAKING_COACH', 'auto'),
+        'daily_goal_turns' => 5,
+        'max_turns_per_session' => 30,
+        'max_chars' => 1000,
+    ],
+
     'media' => [
         'disk' => env('FILESYSTEM_DISK', 'public'),
         'recordings_disk' => env('RECORDINGS_DISK', 'local'),
@@ -46,6 +54,7 @@ return [
         'level_exam_passed' => 500,
         'tenses_checkpoint_passed' => 20,
         'flashcards_daily' => 5,
+        'speaking_daily' => 15,
     ],
 
     'streak' => [

@@ -8,7 +8,7 @@ use App\Models\User;
 use Illuminate\Support\Carbon;
 
 /**
- * PRD 6.2 streak: a day counts with ≥ 1 lesson or ≥ 20 flashcards (learner's timezone).
+ * PRD 6.2 streak: a day counts with ≥ 1 lesson, ≥ 20 flashcards or the daily speaking goal (learner's timezone).
  * One streak freeze per ISO week covers a single missed day.
  */
 class StreakService

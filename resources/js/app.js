@@ -4,6 +4,7 @@ import recorder from './modules/recorder';
 import lessonPlayer from './modules/lesson-player';
 import examRunner from './modules/exam-runner';
 import flashcards from './modules/flashcards';
+import speakingPractice from './modules/speaking-practice';
 import { questionMixin } from './modules/questions';
 import { pwaStore, subscribePush } from './modules/pwa';
 import { downloadUnit, downloadedSlugs } from './modules/offline';
@@ -19,6 +20,7 @@ document.addEventListener('alpine:init', () => {
     Alpine.data('lessonPlayer', lessonPlayer);
     Alpine.data('examRunner', examRunner);
     Alpine.data('flashcards', flashcards);
+    Alpine.data('speakingPractice', speakingPractice);
     Alpine.data('placementQuestion', () => ({ ...questionMixin, answers: {} }));
 
     // glossary popup (PRD 4.3): click a word in a reading passage
